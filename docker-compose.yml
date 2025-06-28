@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  db-go-lang:
+    image: postgres:latest
+    container_name: go-lang-database
+    environment:
+      POSTGRES_DB: goDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1033
+    ports:
+      - "5432:5432"
