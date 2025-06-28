@@ -1,0 +1,5 @@
+Criação de um projeto GO lang
+
+1- go mod {nome-do-projeto} = comando inicial para criação do projeto, resultando num arquivo chamado go.mod
+2- go get {biblioteca/plugin} = comando para instalação de módulos que ajudarão no desenvolvimento da sua API
+3- a function Scan() le os dados retornados da query e coloca dentro de váriaveis go usando a referência de ponteiros (&)
