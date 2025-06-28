@@ -28,6 +28,7 @@ func main() {
 	server.GET("/products", ProductController.GetProducts)
 	server.POST("/products", ProductController.CreateProduct)
 	server.DELETE("/products/:id", ProductController.DeleteProduct)
+	server.GET("/products/:id",ProductController.GetProductById)
 
 	//After de process everthing from project u can start de server setting port
 	server.Run(":8080")

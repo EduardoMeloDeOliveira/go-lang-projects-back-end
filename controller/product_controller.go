@@ -13,69 +13,90 @@ type productController struct {
 	productUseCase usecase.ProductUseCase
 }
 
-
 func NewProductController(usecase usecase.ProductUseCase) productController {
 	return productController{
-		productUseCase:  usecase,
+		productUseCase: usecase,
 	}
 }
 
-func (p *productController) GetProducts(ctx *gin.Context){
-	
-	productsList,err := p.productUseCase.GetProducts()
+func (p *productController) GetProducts(ctx *gin.Context) {
 
-	if(err != nil){
+	productsList, err := p.productUseCase.GetProducts()
+
+	if err != nil {
 		ctx.JSON(500, err)
 	}
 
-	 ctx.JSON(http.StatusOK, productsList)
+	ctx.JSON(http.StatusOK, productsList)
 
 }
 
-func (p * productController) CreateProduct( ctx * gin.Context){
+func (p *productController) CreateProduct(ctx *gin.Context) {
 
-	var productRequestDto  dto.ProductRequestDto
+	var productRequestDto dto.ProductRequestDto
 
 	// tenta extrair o json do body batendo com os campos de productRequestDTO
-	if err := ctx.ShouldBindJSON(&productRequestDto); err !=nil {
-		ctx.JSON(http.StatusBadRequest,gin.H{"error" : "JSON INVÁLIDO"})
+	if err := ctx.ShouldBindJSON(&productRequestDto); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "JSON INVÁLIDO"})
 		return
 	}
 
 	product, err := p.productUseCase.CreateProduct(productRequestDto)
 
-	if(err != nil) {
-		ctx.JSON(http.StatusBadRequest,gin.H{"error" : err.Error()})
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, product)
 }
 
-
-func (p * productController) DeleteProduct (ctx * gin.Context){
+func (p *productController) DeleteProduct(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 
-	if idParam == ""{
-		ctx.JSON(http.StatusBadRequest, gin.H{"error" : "Id obrigatório"})
+	if idParam == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id obrigatório"})
 		return
 	}
 
+	id, err := strconv.ParseInt(idParam, 10, 64)
 
-	id,err := strconv.ParseInt(idParam,10,64)
-	
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error" : "Id obrigatório"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id obrigatório"})
 		return
 	}
 
 	msg, err := p.productUseCase.DeleteProduct(id)
-	if err !=nil{
-				ctx.JSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
-				return
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 
 	}
 
-	ctx.JSON(http.StatusNoContent,msg)
+	ctx.JSON(http.StatusNoContent, msg)
 
+}
+
+func (p *productController) GetProductById(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+
+	if idParam == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id é obrigatório 1"})
+		return
+	}
+
+	id, err := strconv.ParseInt(idParam, 10, 64)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id é obrigatório 2"})
+		return
+	}
+	proudct, err := p.productUseCase.GetProductById(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, proudct)
 }

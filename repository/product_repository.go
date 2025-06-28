@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"go-api/dto/message"
+	dto "go-api/dto/product"
 	"go-api/model"
+
+	"github.com/pelletier/go-toml/query"
 )
 
 type ProductRepository struct {
@@ -87,3 +90,29 @@ func (pr *ProductRepository) DeleteProduct(id int64) (message.SuccessMessage, er
 	return message.SuccessMessage{Message: "Produto deletado com sucesso", StatusCode: 201}, nil
 
 }
+
+func (pr *ProductRepository) GetProductById(id int64) (model.Product, error) {
+	query := "SELECT ID,product_name, product_price FROM product where ID = $1"
+
+	var findedProduct model.Product
+
+	 err := pr.dbConnection.QueryRow(query, id).Scan(
+		&findedProduct.ID,
+		&findedProduct.Name,
+		&findedProduct.Price,
+	)
+
+	if err != nil {
+
+
+		if err == sql.ErrNoRows{
+			return model.Product{}, fmt.Errorf("Produto com o Id %d não foi encontrado",id)
+		}
+	
+		return  model.Product{},nil
+	}
+
+	return findedProduct, nil
+}
+
+

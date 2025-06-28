@@ -44,6 +44,17 @@ func (pu * ProductUseCase) DeleteProduct (id int64) (message.SuccessMessage,erro
 	return  pu.productRepository.DeleteProduct(id);
 }
 
+
+func(pu * ProductUseCase ) GetProductById (id int64) (model.Product,error){
+	
+	if id < 0 {
+		return model.Product{},errors.New("Id inválido")
+	}
+
+	return  pu.productRepository.GetProductById(id)
+}
+
+
 func (pu *ProductUseCase) isValidProduct(product dto.ProductRequestDto) bool {
 	
 	if product.Name == "" || product.Price <= 0 {
@@ -52,3 +63,4 @@ func (pu *ProductUseCase) isValidProduct(product dto.ProductRequestDto) bool {
 
 	return true
 }
+
